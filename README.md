@@ -1,5 +1,7 @@
 # 📹 Generador de Actas por Transcripción de Videos
 
+> ⚡ **¿Prisa?** Ve a [QUICKSTART.md](QUICKSTART.md) para iniciar en 5 minutos
+
 Herramienta profesional para transcribir videos a texto y generar actas en formato `.docx` con transcripciones envueltas en etiquetas XML.
 
 ## 🎯 Características
@@ -29,21 +31,31 @@ Herramienta profesional para transcribir videos a texto y generar actas en forma
 
 ## 🚀 Instalación Rápida
 
-### 1. Clonar o descargar el repositorio
-```bash
-git clone <url-del-repositorio>
-cd "Generacion Actas IA"
-```
+### Opción 1: Rápida (recomendada - 5 minutos)
 
-### 2. Instalar dependencias
-```bash
-pip install -r requirements.txt
-```
+Ve a [QUICKSTART.md](QUICKSTART.md) para los 5 pasos esenciales.
 
-### 3. Ejecutar
-```bash
-python transcribe_videos.py
-```
+### Opción 2: Completa
+
+1. Clonar o descargar el repositorio
+   ```bash
+   git clone <url-del-repositorio>
+   cd "Generacion Actas IA"
+   ```
+
+2. Instalar dependencias
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Ejecutar
+   ```bash
+   python transcribe_videos.py
+   ```
+
+### Opción 3: Detallada con troubleshooting
+
+Ve a [INSTALACION.md](INSTALACION.md) para guía paso a paso y solución de problemas.
 
 ## 📖 Uso
 
@@ -130,19 +142,17 @@ Generacion Actas IA/
 └── .git/                      # Repositorio Git
 ```
 
-## 📝 Logging
+## 📝 Logging y Información
 
-El script registra toda la información en la consola:
+El script registra toda la información en la consola con timestamps:
 
 ```
 2026-04-21 17:45:00,123 - INFO - Iniciando Generador de Actas
 2026-04-21 17:45:05,456 - INFO - Seleccionados 2 videos
 2026-04-21 17:45:10,789 - INFO - Cargando modelo Whisper 'base'...
-2026-04-21 17:45:20,000 - INFO - Modelo cargado exitosamente
-2026-04-21 17:45:21,111 - INFO - ============================================================
-2026-04-21 17:45:21,222 - INFO - Procesando video 1/2
-2026-04-21 17:45:22,333 - INFO - Video validado: video1.mp4 (125.50 MB)
 ```
+
+Esto permite rastrear exactamente qué está ocurriendo en cada momento.
 
 ## 🔐 Mejores Prácticas Implementadas
 
