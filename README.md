@@ -21,13 +21,19 @@ Herramienta profesional para transcribir videos a texto y generar actas en forma
 - Windows 10/11, macOS, o Linux
 
 ### Software Requerido
-- **Python 3.8+** - [Descargar](https://www.python.org/downloads/)
+- **Python 3.9+** - [Descargar](https://www.python.org/downloads/)
 - **FFmpeg** - Ya instalado en tu sistema
 
 ### Capacidad del Sistema
 - CPU: 4+ núcleos (recomendado)
 - RAM: 4+ GB
 - Disco: 2-3 GB libres (para modelo y archivos temporales)
+
+### GPU Opcional
+- GPU NVIDIA compatible con CUDA
+- Driver NVIDIA instalado y visible con `nvidia-smi`
+- Para `faster-whisper` + `ctranslate2` en Windows/Linux, el runtime actual usa CUDA 12.x
+- Para modelos de voz, también necesitas cuDNN compatible con CUDA 12.x
 
 ## 🚀 Instalación Rápida
 
@@ -88,17 +94,45 @@ Sin preámbulos, resúmenes ni texto adicional.
 
 ## ⚙️ Configuración
 
-Edita `transcribe_videos.py` para cambiar:
+El proyecto ahora detecta GPU automáticamente. También puedes controlarlo con variables de entorno:
 
 ```python
 CONFIG = {
-    "WHISPER_MODEL": "base",      # tiny, base, small, medium, large
-    "DEVICE": "cpu",               # cpu, cuda (si tienes GPU NVIDIA)
-    "COMPUTE_TYPE": "int8",        # Cuantización para velocidad
-    "BEAM_SIZE": 5,                # Mayor = más preciso pero lento
-    "CLEAN_TEMP_FILES": True,      # Limpiar archivos temporales
+    "WHISPER_MODEL": "base",             # tiny, base, small, medium, large
+    "DEVICE": "auto",                    # auto, cpu, cuda
+    "CPU_COMPUTE_TYPE": "int8",          # Recomendado para CPU
+    "CUDA_COMPUTE_TYPE": "float16",      # Recomendado para GPU NVIDIA
+    "ALLOW_CPU_FALLBACK": True,          # Si CUDA falla, vuelve a CPU
+    "BEAM_SIZE": 5,                      # Mayor = más preciso pero lento
+    "CLEAN_TEMP_FILES": True,            # Limpiar archivos temporales
 }
 ```
+
+### Variables de entorno útiles
+
+En PowerShell, para usar GPU en la sesión actual:
+
+```powershell
+$env:WHISPER_DEVICE="cuda"
+$env:WHISPER_CUDA_COMPUTE_TYPE="float16"
+python transcribe_videos.py
+```
+
+Para volver a CPU:
+
+```powershell
+$env:WHISPER_DEVICE="cpu"
+python transcribe_videos.py
+```
+
+Si quieres dejarlo permanente en Windows:
+
+```powershell
+setx WHISPER_DEVICE "cuda"
+setx WHISPER_CUDA_COMPUTE_TYPE "float16"
+```
+
+Luego abre una terminal nueva antes de ejecutar el script.
 
 ### Modelos disponibles y tiempos aproximados
 | Modelo | Tamaño | Velocidad | Precisión | RAM |
@@ -123,7 +157,14 @@ pip install --force-reinstall moviepy faster-whisper python-docx
 
 ### Transcripción lenta
 - Usa un modelo más pequeño: cambia `"WHISPER_MODEL": "tiny"`
-- Si tienes GPU NVIDIA: cambia `"DEVICE": "cuda"`
+- Si tienes GPU NVIDIA: usa `WHISPER_DEVICE=cuda`
+- Para GPU, `float16` suele ser la mejor opción inicial
+
+### CUDA no arranca
+- Verifica que `nvidia-smi` funcione
+- Confirma que Python ve `ctranslate2` con soporte CUDA
+- Instala CUDA 12.x y cuDNN compatible si aún no están presentes
+- El script intentará volver a CPU automáticamente si `ALLOW_CPU_FALLBACK=True`
 
 ### Archivo .docx corrupto
 - Intenta con un video de prueba más corto

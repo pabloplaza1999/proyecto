@@ -8,7 +8,7 @@ Bienvenido al **Generador de Actas por Transcripción de Videos**. Este archivo 
 
 ### 1️⃣ Verifica los Requisitos (30 segundos)
 ```bash
-python --version          # Debe ser 3.8+
+python --version          # Debe ser 3.9+
 ffmpeg -version           # Debe funcionar
 ```
 
@@ -17,6 +17,21 @@ ffmpeg -version           # Debe funcionar
 ### 2️⃣ Instala Dependencias (2 minutos)
 ```bash
 pip install -r requirements.txt
+```
+
+### 2.5️⃣ Si quieres usar GPU NVIDIA
+Verifica primero:
+
+```bash
+nvidia-smi
+```
+
+Si funciona, ejecuta el proyecto con GPU en esta sesión de PowerShell:
+
+```powershell
+$env:WHISPER_DEVICE="cuda"
+$env:WHISPER_CUDA_COMPUTE_TYPE="float16"
+python transcribe_videos.py
 ```
 
 ### 3️⃣ Ejecuta el Programa (1 minuto)
@@ -44,12 +59,14 @@ python transcribe_videos.py
 
 ## 🔧 Configuración Rápida
 
-Edita `transcribe_videos.py` línea 40-46 para cambiar:
+El proyecto usa `auto` por defecto, pero puedes forzar el dispositivo con variables de entorno:
 
 ```python
 CONFIG = {
-    "WHISPER_MODEL": "base",    # Cambia a "tiny" si es muy lento
-    "DEVICE": "cpu",            # Cambia a "cuda" si tienes GPU
+    "WHISPER_MODEL": "base",
+    "DEVICE": "auto",                  # auto, cpu, cuda
+    "CPU_COMPUTE_TYPE": "int8",
+    "CUDA_COMPUTE_TYPE": "float16",
     # ... más opciones
 }
 ```
@@ -60,8 +77,9 @@ CONFIG = {
 |----------|----------|
 | **"ModuleNotFoundError"** | `pip install --force-reinstall moviepy` |
 | **"ffmpeg not found"** | Ve a [INSTALACION.md](INSTALACION.md#error-ffmpeg-not-found) |
-| **Muy lento** | Cambia `"WHISPER_MODEL": "tiny"` |
+| **Muy lento** | Cambia `"WHISPER_MODEL": "tiny"` o usa GPU |
 | **Video sin audio** | Verifica con VLC, algunos formatos no son compatibles |
+| **No usa GPU** | Ejecuta `nvidia-smi` y luego define `WHISPER_DEVICE=cuda` |
 
 ## 💡 Consejos
 

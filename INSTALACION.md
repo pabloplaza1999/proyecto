@@ -23,7 +23,7 @@ cd "C:\Users\LOQ\Downloads\IA\Generacion Actas IA"
 ```bash
 python --version
 ```
-✅ Debe mostrar **3.8 o superior**
+✅ Debe mostrar **3.9 o superior**
 
 Ejemplo: `Python 3.11.0`
 
@@ -34,6 +34,13 @@ ffmpeg -version
 ✅ Debe mostrar información de FFmpeg
 
 Si no está instalado, descárgalo desde [ffmpeg.org](https://ffmpeg.org/download.html)
+
+### Verificar GPU NVIDIA (opcional)
+```bash
+nvidia-smi
+```
+
+✅ Si ves tu GPU y la versión del driver, Windows ya la detecta correctamente.
 
 ## 📦 Paso 3: Instalar Dependencias
 
@@ -56,10 +63,30 @@ python -c "import moviepy, faster_whisper, docx; print('✓ Todo instalado')"
 
 ✅ Debe mostrar: `✓ Todo instalado`
 
+### Verificar backend CUDA en Python
+```bash
+python -c "import ctranslate2; print(ctranslate2.__version__); print(ctranslate2.get_supported_compute_types('cuda'))"
+```
+
+✅ Si aparece una lista con `float16` o `int8_float16`, el backend CUDA está disponible.
+
 ## 🚀 Paso 4: Ejecutar el Programa
 
 ### Opción 1: Desde PowerShell/Terminal
 ```bash
+python transcribe_videos.py
+```
+
+### Opción 1B: Forzar GPU en PowerShell
+```powershell
+$env:WHISPER_DEVICE="cuda"
+$env:WHISPER_CUDA_COMPUTE_TYPE="float16"
+python transcribe_videos.py
+```
+
+### Opción 1C: Forzar CPU en PowerShell
+```powershell
+$env:WHISPER_DEVICE="cpu"
 python transcribe_videos.py
 ```
 
@@ -173,6 +200,12 @@ pip install --force-reinstall moviepy
 - Usa un modelo más pequeño en `CONFIG`
 - Si tienes GPU NVIDIA, activa CUDA
 
+### Error relacionado con CUDA / cuDNN
+- `faster-whisper` usa `ctranslate2` por debajo
+- En Windows y Linux, las ruedas actuales de `ctranslate2` usan CUDA 12.x
+- Para modelos de voz también necesitas cuDNN compatible con CUDA 12.x
+- Si CUDA falla, el script ahora intenta volver automáticamente a CPU
+
 ## 📚 Documentación del Proyecto
 
 - **README.md**: Guía general del proyecto
@@ -196,10 +229,21 @@ Edita `transcribe_videos.py` y modifica `CONFIG`:
 ```python
 CONFIG = {
     "WHISPER_MODEL": "base",  # Cambia a "tiny" si es muy lento
-    "DEVICE": "cpu",          # Cambia a "cuda" si tienes GPU
+    "DEVICE": "auto",         # auto, cpu, cuda
+    "CPU_COMPUTE_TYPE": "int8",
+    "CUDA_COMPUTE_TYPE": "float16",
     # ...
 }
 ```
+
+O usa variables de entorno sin editar el archivo:
+
+```powershell
+setx WHISPER_DEVICE "cuda"
+setx WHISPER_CUDA_COMPUTE_TYPE "float16"
+```
+
+Después abre una terminal nueva.
 
 ### 3. Procesar tus videos
 ```bash

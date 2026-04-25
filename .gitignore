@@ -59,6 +59,9 @@ logs/
 *.pyc
 *.pyo
 
+# Documentos generados
+*.docx
+
 # Directorios de videos y documentos generados (opcional - comentar si quieres versionar)
 # *.mp4
 # *.avi
