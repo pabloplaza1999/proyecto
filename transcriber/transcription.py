@@ -11,7 +11,7 @@ from faster_whisper import WhisperModel
 logger = logging.getLogger(__name__)
 
 
-def transcribe_audio(audio_path: str, model: WhisperModel, beam_size: int) -> Optional[list[dict]]:
+def transcribe_audio(audio_path: str, model: WhisperModel, beam_size: int, language: str | None = None) -> Optional[list[dict]]:
     """
     Transcribe un archivo de audio usando Faster Whisper.
     
@@ -22,7 +22,7 @@ def transcribe_audio(audio_path: str, model: WhisperModel, beam_size: int) -> Op
         logger.info("Transcribiendo audio: %s", os.path.basename(audio_path))
         
         # Esta es la llamada principal a la IA.
-        segments, info = model.transcribe(audio_path, beam_size=beam_size)
+        segments, info = model.transcribe(audio_path, beam_size=beam_size, language=language)
 
         transcription_data = []
         

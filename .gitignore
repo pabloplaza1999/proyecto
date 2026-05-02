@@ -61,6 +61,7 @@ logs/
 
 # Documentos generados
 *.docx
+*_acta.txt
 
 # Directorios de videos y documentos generados (opcional - comentar si quieres versionar)
 # *.mp4

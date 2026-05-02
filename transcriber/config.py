@@ -27,6 +27,7 @@ class AppConfig:
     video_formats: tuple[str, ...]
     audio_format: str
     clean_temp_files: bool
+    language: str | None
 
 
 def _configure_hf_token() -> None:
@@ -84,6 +85,7 @@ def load_config() -> AppConfig:
         video_formats=("*.mp4", "*.avi", "*.mov", "*.mkv", "*.flv", "*.wmv"),
         audio_format="wav",
         clean_temp_files=True,
+        language=os.getenv("WHISPER_LANGUAGE", "es"),
     )
 
 
