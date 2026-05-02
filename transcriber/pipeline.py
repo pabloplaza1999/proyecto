@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import time
 
 from faster_whisper import WhisperModel
 
@@ -27,6 +28,7 @@ def process_videos(
 
     for index, video_path in enumerate(video_paths, 1):
         try:
+            video_start_time = time.time()
             logger.info("\n%s", "=" * 60)
             logger.info("Procesando video %s/%s", index, len(video_paths))
             logger.info("%s", "=" * 60)
@@ -48,7 +50,7 @@ def process_videos(
 
             # 2. Transcripción (Uso de la IA)
             # Convierte el audio extraído en una lista de segmentos estructurados con tiempo y texto
-            transcription_segments = transcribe_audio(audio_path, model, config.beam_size)
+            transcription_segments = transcribe_audio(audio_path, model, config.beam_size, config.language)
             if transcription_segments is None:
                 fail_count += 1
                 cleanup_temp_file(audio_path, enabled=config.clean_temp_files)
@@ -72,7 +74,13 @@ def process_videos(
             # Se ejecuta solo si la configuración permite la limpieza de archivos temporales
             cleanup_temp_file(audio_path, enabled=config.clean_temp_files)
             success_count += 1
-            logger.info("✓ Video completado exitosamente: %s\n", docx_path)
+            
+            video_end_time = time.time()
+            elapsed_seconds = video_end_time - video_start_time
+            mins, secs = divmod(elapsed_seconds, 60)
+            
+            logger.info("✓ Video completado exitosamente: %s", docx_path)
+            logger.info("⏱️ Tiempo de ejecución: %d minutos y %.2f segundos\n", int(mins), secs)
         except Exception as error:
             logger.error("Error inesperado procesando video %s: %s", index, error)
             fail_count += 1
