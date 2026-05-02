@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import sys
 from tkinter import messagebox
 
 from faster_whisper import WhisperModel
@@ -171,4 +172,6 @@ def main() -> None:
         # Captura errores que no hayan sido manejados antes
         logger.error("Error crítico: %s", error, exc_info=True)
         messagebox.showerror("Error", f"Error crítico: {error}")
+    finally:
+        sys.exit(0)
 
