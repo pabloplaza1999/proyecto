@@ -49,6 +49,24 @@ def _configure_windows_dll_paths() -> None:
     if cuda_path:
         candidate_paths.append(Path(cuda_path) / "bin")
 
+    # Add pip installed nvidia cublas/cudnn paths if they exist
+    try:
+        import site
+        site_packages = site.getsitepackages()
+        if hasattr(site, 'getusersitepackages'):
+            site_packages.append(site.getusersitepackages())
+            
+        for site_pkg in site_packages:
+            site_pkg_path = Path(site_pkg)
+            cublas_bin = site_pkg_path / "nvidia" / "cublas" / "bin"
+            cudnn_bin = site_pkg_path / "nvidia" / "cudnn" / "bin"
+            if cublas_bin.exists():
+                candidate_paths.append(cublas_bin)
+            if cudnn_bin.exists():
+                candidate_paths.append(cudnn_bin)
+    except Exception as e:
+        logger.warning("Error buscando paquetes de nvidia: %s", e)
+
     try:
         import ctranslate2
 
@@ -64,6 +82,8 @@ def _configure_windows_dll_paths() -> None:
         try:
             handle = os.add_dll_directory(resolved)
             _DLL_HANDLES.append(handle)
+            # También añadir al PATH del sistema para dependencias transitivas
+            os.environ["PATH"] = resolved + os.pathsep + os.environ.get("PATH", "")
             seen.add(resolved)
         except Exception as error:
             logger.warning("No se pudo registrar ruta de DLL '%s': %s", resolved, error)
